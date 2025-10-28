@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "test-static-site",
+  "builds": [
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ]
+}
