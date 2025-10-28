@@ -1,0 +1,7 @@
+name = "test-static-site"
+compatibility_date = "2023-05-18"
+
+[build]
+command = ""
+publish = "."
+
