@@ -1,5 +1,7 @@
 [build]
   base = "."
   publish = "."
+  
   functions = "netlify/functions"
+
 
