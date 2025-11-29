@@ -3,7 +3,7 @@
   "name": "Test-Repository-static",
   "builds": [
     {
-      "src": "dist/**",
+      "src": "**/*",
       "use": "@vercel/static"
     }
   ]
