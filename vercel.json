@@ -1,19 +1,10 @@
 {
   "version": 2,
-  "public": true,
+  "name": "Test-Repository-static",
   "builds": [
     {
-      "src": "index.html",
+      "src": "**/*",
       "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "index.html"
     }
   ]
 }
-
-
-
