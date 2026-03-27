@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "Test-Repository-static",
+  "name": "Test-Repository-static-1",
   "builds": [
     {
       "src": "**/*",
