@@ -8,14 +8,21 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
+    - name: Create and Configure S3 Bucket
+      run: |
+        aws s3api create-bucket --bucket aws-test-deployment-570dc8a0 --region us-east-1 || true
+        aws s3api put-public-access-block --bucket aws-test-deployment-570dc8a0 --public-access-block-configuration BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false
+        aws s3api put-bucket-policy --bucket aws-test-deployment-570dc8a0 --policy '{"Version":"2012-10-17","Statement":[{"Sid":"PublicReadGetObject","Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::aws-test-deployment-570dc8a0/*"}]}'
+        aws s3 website s3://aws-test-deployment-570dc8a0/ --index-document index.html --error-document index.html
+
     - name: Deploy to S3
-      run: aws s3 sync . s3://aws-test-deployment --delete
+      run: aws s3 sync . s3://aws-test-deployment-570dc8a0 --delete
