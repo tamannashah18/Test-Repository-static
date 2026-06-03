@@ -1,10 +1,4 @@
 {
-  "version": 2,
-  "name": "Test-Repository-static",
-  "builds": [
-    {
-      "src": "**/*",
-      "use": "@vercel/static"
-    }
-  ]
+  "outputDirectory": ".",
+  "framework": "static"
 }
