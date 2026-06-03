@@ -19,10 +19,10 @@ jobs:
 
     - name: Create and Configure S3 Bucket
       run: |
-        aws s3api create-bucket --bucket aws-test-deployment-570dc8a0 --region us-east-1 || true
-        aws s3api put-public-access-block --bucket aws-test-deployment-570dc8a0 --public-access-block-configuration BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false
-        aws s3api put-bucket-policy --bucket aws-test-deployment-570dc8a0 --policy '{"Version":"2012-10-17","Statement":[{"Sid":"PublicReadGetObject","Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::aws-test-deployment-570dc8a0/*"}]}'
-        aws s3 website s3://aws-test-deployment-570dc8a0/ --index-document index.html --error-document index.html
+        aws s3api create-bucket --bucket aws-test-deployment-2-da648ec8 --region us-east-1 || true
+        aws s3api put-public-access-block --bucket aws-test-deployment-2-da648ec8 --public-access-block-configuration BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false
+        aws s3api put-bucket-policy --bucket aws-test-deployment-2-da648ec8 --policy '{"Version":"2012-10-17","Statement":[{"Sid":"PublicReadGetObject","Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::aws-test-deployment-2-da648ec8/*"}]}'
+        aws s3 website s3://aws-test-deployment-2-da648ec8/ --index-document index.html --error-document index.html
 
     - name: Deploy to S3
-      run: aws s3 sync . s3://aws-test-deployment-570dc8a0 --delete
+      run: aws s3 sync . s3://aws-test-deployment-2-da648ec8 --delete
