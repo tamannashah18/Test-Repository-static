@@ -15,14 +15,15 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        aws-region: ap-south-1
 
     - name: Create and Configure S3 Bucket
       run: |
-        aws s3api create-bucket --bucket aws-test-deployment-2-da648ec8 --region us-east-1 || true
-        aws s3api put-public-access-block --bucket aws-test-deployment-2-da648ec8 --public-access-block-configuration BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false
-        aws s3api put-bucket-policy --bucket aws-test-deployment-2-da648ec8 --policy '{"Version":"2012-10-17","Statement":[{"Sid":"PublicReadGetObject","Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::aws-test-deployment-2-da648ec8/*"}]}'
-        aws s3 website s3://aws-test-deployment-2-da648ec8/ --index-document index.html --error-document index.html
+        aws s3api create-bucket --bucket aws-test-deployment-3-505a1bda --region ap-south-1 --create-bucket-configuration LocationConstraint=ap-south-1 || true
+        aws s3api put-public-access-block --bucket aws-test-deployment-3-505a1bda --public-access-block-configuration BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false
+        sleep 5 # Wait for public access block removal to propagate
+        aws s3api put-bucket-policy --bucket aws-test-deployment-3-505a1bda --policy '{"Version":"2012-10-17","Statement":[{"Sid":"PublicReadGetObject","Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::aws-test-deployment-3-505a1bda/*"}]}'
+        aws s3 website s3://aws-test-deployment-3-505a1bda/ --index-document index.html --error-document index.html
 
     - name: Deploy to S3
-      run: aws s3 sync . s3://aws-test-deployment-2-da648ec8 --delete
+      run: aws s3 sync . s3://aws-test-deployment-3-505a1bda --delete
