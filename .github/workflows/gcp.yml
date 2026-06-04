@@ -1,0 +1,36 @@
+name: Deploy to GCP
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Create and Configure GCS Bucket
+      run: |
+        gcloud storage buckets create gs://aws-test-deployment-2-da648ec8 --location=us-central1 --project=${{ secrets.GCP_PROJECT_ID }} || true
+        gcloud storage buckets update gs://aws-test-deployment-2-da648ec8 --web-main-page-suffix=index.html --web-error-page=index.html
+        gcloud storage buckets add-iam-policy-binding gs://aws-test-deployment-2-da648ec8 --member=allUsers --role=roles/storage.objectViewer
+
+    - name: Deploy to GCS
+      run: gcloud storage rsync . gs://aws-test-deployment-2-da648ec8 --recursive --delete-unmatched
+
+    - name: Notify Success
+      if: success()
+      run: curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a21c8342860f23744c15d2f", "status": "success"}'
+
+    - name: Notify Failure
+      if: failure()
+      run: curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a21c8342860f23744c15d2f", "status": "failed"}'
