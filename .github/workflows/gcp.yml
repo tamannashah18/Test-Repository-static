@@ -25,14 +25,14 @@ jobs:
         gcloud storage buckets add-iam-policy-binding gs://aws-test-deployment-2-da648ec8 --member=allUsers --role=roles/storage.objectViewer
 
     - name: Deploy to GCS
-      run: gcloud storage rsync . gs://aws-test-deployment-2-da648ec8 --recursive --delete-unmatched
+      run: gcloud storage rsync . gs://aws-test-deployment-2-da648ec8 --recursive --delete-unmatched-destination-objects
 
     - name: Notify Success
       if: success()
       run: |
-        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a21c92a464d23d38cb8c0ac", "status": "success"}'
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a21c9ccb908568eaebfb0d7", "status": "success"}'
 
     - name: Notify Failure
       if: failure()
       run: |
-        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a21c92a464d23d38cb8c0ac", "status": "failed"}'
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a21c9ccb908568eaebfb0d7", "status": "failed"}'
