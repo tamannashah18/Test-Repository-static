@@ -27,19 +27,29 @@ jobs:
         STORAGE_NAME="staticazuretest2${SUB_ID:0:8}"
         STORAGE_NAME="${STORAGE_NAME:0:24}"
         echo "AZURE_STORAGE_NAME=$STORAGE_NAME" >> $GITHUB_ENV
+        echo "Using storage account: $STORAGE_NAME in location: $LOCATION"
         az group create --name staticazuretest28a2ac2-rg --location $LOCATION || true
-        az storage account create --name $STORAGE_NAME --resource-group staticazuretest28a2ac2-rg --location $LOCATION --sku Standard_LRS --allow-blob-public-access true || true
-        az storage blob service-properties update --account-name $STORAGE_NAME --auth-mode login --static-website --404-document index.html --index-document index.html
+        ACCT_EXISTS=$(az storage account show --name $STORAGE_NAME --resource-group staticazuretest28a2ac2-rg --query name -o tsv 2>/dev/null || echo '')
+        if [ -z "$ACCT_EXISTS" ]; then
+          echo "Creating storage account $STORAGE_NAME..."
+          az storage account create --name $STORAGE_NAME --resource-group staticazuretest28a2ac2-rg --location $LOCATION --sku Standard_LRS --allow-blob-public-access true
+        else
+          echo "Storage account $STORAGE_NAME already exists, skipping creation."
+        fi
+        STORAGE_KEY=$(az storage account keys list --account-name $STORAGE_NAME --resource-group staticazuretest28a2ac2-rg --query '[0].value' -o tsv)
+        az storage blob service-properties update --account-name $STORAGE_NAME --account-key $STORAGE_KEY --static-website --404-document index.html --index-document index.html
 
     - name: Upload to Azure Storage $web container
-      run: az storage blob upload-batch -d '$web' --account-name ${{ env.AZURE_STORAGE_NAME }} --auth-mode login -s dist --overwrite
+      run: |
+        STORAGE_KEY=$(az storage account keys list --account-name ${{ env.AZURE_STORAGE_NAME }} --resource-group staticazuretest28a2ac2-rg --query '[0].value' -o tsv)
+        az storage blob upload-batch -d '$web' --account-name ${{ env.AZURE_STORAGE_NAME }} --account-key $STORAGE_KEY -s dist --overwrite
 
     - name: Notify Success
       if: success()
       run: |
-        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e4b14f68f13269e3ee46", "status": "success"}'
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e5d0687c699830e9fabb", "status": "success"}'
 
     - name: Notify Failure
       if: failure()
       run: |
-        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e4b14f68f13269e3ee46", "status": "failed"}'
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e5d0687c699830e9fabb", "status": "failed"}'
