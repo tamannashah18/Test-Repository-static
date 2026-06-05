@@ -45,14 +45,19 @@ jobs:
     - name: Upload to Azure Storage $web container
       run: |
         STORAGE_KEY=$(az storage account keys list --account-name ${{ env.AZURE_STORAGE_NAME }} --resource-group staticazuretest28a2ac2-rg --query '[0].value' -o tsv | tr -d '[:space:]')
-        az storage blob upload-batch -d '$web' --account-name ${{ env.AZURE_STORAGE_NAME }} --account-key $STORAGE_KEY -s dist --overwrite
+        UPLOAD_DIR="dist"
+        if [ ! -d "$UPLOAD_DIR" ]; then
+          echo "⚠️ Directory '$UPLOAD_DIR' not found. Falling back to repository root (.)."
+          UPLOAD_DIR="."
+        fi
+        az storage blob upload-batch -d '$web' --account-name ${{ env.AZURE_STORAGE_NAME }} --account-key $STORAGE_KEY -s "$UPLOAD_DIR" --overwrite
 
     - name: Notify Success
       if: success()
       run: |
-        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e6be80591a14ea10fdbb", "status": "success"}'
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e7fc8c672e6d0f5a1022", "status": "success"}'
 
     - name: Notify Failure
       if: failure()
       run: |
-        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e6be80591a14ea10fdbb", "status": "failed"}'
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e7fc8c672e6d0f5a1022", "status": "failed"}'
