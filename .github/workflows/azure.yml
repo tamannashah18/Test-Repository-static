@@ -17,8 +17,8 @@ jobs:
 
     - name: Create and Configure Azure Storage Account
       run: |
-        az group create --name staticazuretest3d6f0f-rg --location us-central1 || true
-        az storage account create --name staticazuretest3d6f0f --resource-group staticazuretest3d6f0f-rg --location us-central1 --sku Standard_LRS --allow-blob-public-access true || true
+        az group create --name staticazuretest3d6f0f-rg --location centralus || true
+        az storage account create --name staticazuretest3d6f0f --resource-group staticazuretest3d6f0f-rg --location centralus --sku Standard_LRS --allow-blob-public-access true || true
         az storage blob service-properties update --account-name staticazuretest3d6f0f --static-website --404-document index.html --index-document index.html
 
     - name: Upload to Azure Storage $web container
@@ -27,9 +27,9 @@ jobs:
     - name: Notify Success
       if: success()
       run: |
-        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22c28e947d2a03b10c6ea1", "status": "success"}'
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22c335947d2a03b10c6ea3", "status": "success"}'
 
     - name: Notify Failure
       if: failure()
       run: |
-        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22c28e947d2a03b10c6ea1", "status": "failed"}'
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22c335947d2a03b10c6ea3", "status": "failed"}'
