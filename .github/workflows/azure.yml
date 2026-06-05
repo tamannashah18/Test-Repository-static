@@ -21,21 +21,21 @@ jobs:
 
     - name: Create and Configure Azure Storage Account
       run: |
-        EXISTING_LOCATION=$(az group show --name staticazuretest3d6f0f-rg --query location -o tsv 2>/dev/null || echo '')
+        EXISTING_LOCATION=$(az group show --name staticazuretest28a2ac2-rg --query location -o tsv 2>/dev/null || echo '')
         LOCATION=${EXISTING_LOCATION:-eastus}
-        az group create --name staticazuretest3d6f0f-rg --location $LOCATION || true
-        az storage account create --name staticazuretest3d6f0f --resource-group staticazuretest3d6f0f-rg --location $LOCATION --sku Standard_LRS --allow-blob-public-access true || true
-        az storage blob service-properties update --account-name staticazuretest3d6f0f --auth-mode login --static-website --404-document index.html --index-document index.html
+        az group create --name staticazuretest28a2ac2-rg --location $LOCATION || true
+        az storage account create --name staticazuretest28a2ac2 --resource-group staticazuretest28a2ac2-rg --location $LOCATION --sku Standard_LRS --allow-blob-public-access true || true
+        az storage blob service-properties update --account-name staticazuretest28a2ac2 --auth-mode login --static-website --404-document index.html --index-document index.html
 
     - name: Upload to Azure Storage $web container
-      run: az storage blob upload-batch -d '$web' --account-name staticazuretest3d6f0f --auth-mode login -s dist --overwrite
+      run: az storage blob upload-batch -d '$web' --account-name staticazuretest28a2ac2 --auth-mode login -s dist --overwrite
 
     - name: Notify Success
       if: success()
       run: |
-        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e25adb2d3a03b21d842c", "status": "success"}'
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e2dbdb2d3a03b21d842e", "status": "success"}'
 
     - name: Notify Failure
       if: failure()
       run: |
-        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e25adb2d3a03b21d842c", "status": "failed"}'
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e2dbdb2d3a03b21d842e", "status": "failed"}'
