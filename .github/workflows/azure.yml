@@ -13,14 +13,11 @@ jobs:
     - name: Azure Login
       uses: azure/login@v2
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Verify Azure Login
       run: |
-        az account show || (echo '❌ Azure secrets missing or invalid. Check AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID in repo Settings → Secrets.' && exit 1)
+        az account show || (echo '❌ Azure login failed. Check that AZURE_CREDENTIALS secret is set correctly in repo Settings → Secrets → Actions.' && exit 1)
 
     - name: Create and Configure Azure Storage Account
       run: |
@@ -36,9 +33,9 @@ jobs:
     - name: Notify Success
       if: success()
       run: |
-        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e1bb9811a4c4c0a1bcd6", "status": "success"}'
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e25adb2d3a03b21d842c", "status": "success"}'
 
     - name: Notify Failure
       if: failure()
       run: |
-        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e1bb9811a4c4c0a1bcd6", "status": "failed"}'
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a22e25adb2d3a03b21d842c", "status": "failed"}'
