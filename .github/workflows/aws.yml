@@ -26,4 +26,14 @@ jobs:
         aws s3 website s3://test-repository-static-191afac4/ --index-document index.html --error-document index.html
 
     - name: Deploy to S3
-      run: aws s3 sync . s3://test-repository-static-191afac4 --delete
+      run: aws s3 sync ./dist s3://test-repository-static-191afac4 --delete
+
+    - name: Notify Success
+      if: success()
+      run: |
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a32cc137b7c227ec9339a56", "status": "success"}'
+
+    - name: Notify Failure
+      if: failure()
+      run: |
+        curl -X POST https://rebuttal-slashing-glove.ngrok-free.dev/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -d '{"deploymentId": "6a32cc137b7c227ec9339a56", "status": "failed"}'
