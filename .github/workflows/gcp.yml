@@ -26,13 +26,3 @@ jobs:
 
     - name: Deploy to GCS
       run: gcloud storage rsync . gs://test-repository-static-191afac4 --recursive --delete-unmatched-destination-objects
-
-    - name: Notify Success
-      if: success()
-      run: |
-        curl -X POST ${{ secrets.SWIFT_DEPLOY_WEBHOOK_URL }}/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -H "ngrok-skip-browser-warning: true" -d '{"deploymentId": "6a32e25239299a33090894a1", "status": "success"}'
-
-    - name: Notify Failure
-      if: failure()
-      run: |
-        curl -X POST ${{ secrets.SWIFT_DEPLOY_WEBHOOK_URL }}/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -H "ngrok-skip-browser-warning: true" -d '{"deploymentId": "6a32e25239299a33090894a1", "status": "failed"}'
