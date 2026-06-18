@@ -31,9 +31,9 @@ jobs:
     - name: Notify Success
       if: success()
       run: |
-        curl -X POST ${{ secrets.SWIFT_DEPLOY_WEBHOOK_URL }}/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -H "ngrok-skip-browser-warning: true" -d '{"deploymentId": "6a33b3fe195a3369b1f0e5b2", "status": "success"}'
+        curl -X POST ${{ secrets.SWIFT_DEPLOY_WEBHOOK_URL }}/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -H "ngrok-skip-browser-warning: true" -d '{"deploymentId": "6a33bcbccc7c640651a5b2f7", "status": "success"}'
 
     - name: Notify Failure
       if: failure()
       run: |
-        curl -X POST ${{ secrets.SWIFT_DEPLOY_WEBHOOK_URL }}/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -H "ngrok-skip-browser-warning: true" -d '{"deploymentId": "6a33b3fe195a3369b1f0e5b2", "status": "failed"}'
+        curl -X POST ${{ secrets.SWIFT_DEPLOY_WEBHOOK_URL }}/api/UnifiedDeployment/webhook/github -H "Content-Type: application/json" -H "ngrok-skip-browser-warning: true" -d '{"deploymentId": "6a33bcbccc7c640651a5b2f7", "status": "failed"}'
